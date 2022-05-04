@@ -1,46 +1,40 @@
 /* eslint-disable react/jsx-no-duplicate-props */
 import React from 'react';
 import { Link } from "react-router-dom";
+import { useEffect, useState } from 'react';
 import './Arrivals.css';
 import arrowLeft from '../../../assets/arrowLeft.png';
 import arrowRight from '../../../assets/arrowRight.png';
-import itemTemp2 from '../../../assets/itemTemp-2.png';
 
 const Arrivals = () => {
+  const [productsState, setProductsState] = useState([])
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/products')
+      .then(res => {
+        if(res.ok){
+          return res.json()
+        }
+      })
+      .then(jsonResponse => setProductsState(jsonResponse.data))
+  },[]);
+
+  console.log(document.cookie)
+
   return (
     <>
       <div className='title'>New Arrivals</div>
-      <img src={arrowLeft} alt='arrowLeft' className='arrow-left-a' />
-      <img src={itemTemp2} alt='itemTemp2' className='item1-container' />
-      <Link to='/tempItemPage1' activeStyle>
-        <span className='item1-description' style={{"display": "block"}}>
-          Name of Product $Price Of Product Category of Product
-        </span>
-      </Link>
-      <img src={itemTemp2} alt='itemTemp2' className='item2-container' />
-      <Link to='/tempItemPage1' activeStyle>
-        <span className='item2-description' style={{"display": "block"}}>
-          Name of Product $Price Of Product Category of Product
-        </span>
-      </Link>
-      <img src={itemTemp2} alt='itemTemp2' className='item3-container' />
-      <Link to='/tempItemPage1' activeStyle>
-        <span className='item3-description' style={{"display": "block"}}>
-          Name of Product $Price Of Product Category of Product
-        </span>
-      </Link>
-      <img src={itemTemp2} alt='itemTemp2' className='item4-container' />
-      <Link to='/tempItemPage1' activeStyle>
-        <span className='item4-description' style={{"display": "block"}}>
-          Name of Product $Price Of Product Category of Product
-        </span>
-      </Link>
-      <img src={itemTemp2} alt='itemTemp2' className='item5-container' />
-      <Link to='/tempItemPage1' activeStyle>
-        <span className='item5-description' style={{"display": "block"}}>
-          Name of Product $Price Of Product Category of Product
-        </span>
-      </Link>
+      <img src={arrowLeft} alt='arrowLeft' className='arrow-left-a'/>
+      {productsState.categories && productsState.categories.map((category, index) => (
+        <>
+          <img src={category.productImage} alt='itemTemp2' className={'item' + (index+1) + '-container'} />
+          <Link to={'/tempItemPage1?' + (index+1)} activeStyle>
+            <span className={'item'+ (index+1) +'-description'} style={{"display": "block"}}>
+              {category.productName + " " + category.price + " " + category.categoryName}
+            </span>
+          </Link>
+        </>
+      ))}
       <img src={arrowRight} alt='arrowRight1' className='arrow-right-a' />
     </>
   )
